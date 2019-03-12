@@ -17,8 +17,7 @@ body, html {
 }
 </style>
 
-<body>
-</body>
+<body></body>
 
 <script>
 let video;
@@ -43,26 +42,31 @@ function setup() {
   video = createCapture(VIDEO);
   video.size(width, height);
 
+  // Load model and start draw loop when finished
   poseNet = ml5.poseNet(video, 'multiple', loop);
 
+  // Find poses every frame
   poseNet.on('pose', results => poses = results);
 
   video.hide(); // Hide video element, only draw canvas
 }
 
 function draw() {
+  // Draw video frame image
   image(video, 0, 0, width, height);
 
+  // If poses were detected in current frame
   if (poses) {
     // Find eyes
     let eyes = [];
     for (let i = 0; i < poses.length; i++) {
       for (let j = 1; j < 3; j++) {
+        // Create Eye object for each eye found
         let eye = poses[i].pose.keypoints[j];
-        if (eye.score > 0.25) {
+        if (eye.score > 0.25) { // Want to be fairly sure it's an eye
           eyes.push(
             new Eye(
-              get(
+              get( // Grab pixels
                 eye.position.x - (eyeBoxSize/2),
                 eye.position.y - (eyeBoxSize/2),
                 eyeBoxSize,
@@ -76,7 +80,7 @@ function draw() {
       }
     }
 
-    // Draw background
+    // Draw background (cover frame)
     fill(0);
     noStroke();
     rect(0, 0, width, height);
