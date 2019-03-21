@@ -18,7 +18,11 @@ body, html {
 }
 </style>
 
-<body></body>
+<body>
+  <span class='message'>
+    Loading...
+  </span>
+</body>
 
 <script>
 let video;
@@ -35,6 +39,11 @@ class Eye {
   }
 }
 
+function modelLoaded() {
+  document.querySelector('.message').innerText = '';
+  loop();
+}
+
 function setup() {
   noLoop(); // Don't start drawing until model is loaded
   frameRate(30);
@@ -44,7 +53,7 @@ function setup() {
   video.size(width, height);
 
   // Load model and start draw loop when finished
-  poseNet = ml5.poseNet(video, 'multiple', loop);
+  poseNet = ml5.poseNet(video, 'multiple', modelLoaded);
 
   // Find poses every frame
   poseNet.on('pose', results => poses = results);
@@ -53,7 +62,7 @@ function setup() {
 
   // Display message if no webcam available
   navigator.mediaDevices.getUserMedia({ video: true }).catch(err => {
-    document.querySelector('body').innerText = 'You need a webcam for this to work'
+    document.querySelector('.message').innerText = 'You need a webcam for this to work'
   });
 }
 
