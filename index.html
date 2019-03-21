@@ -14,6 +14,7 @@ body, html {
   margin: 0;
   text-align: center;
   background-color: #000;
+  color: #eee;
 }
 </style>
 
@@ -49,6 +50,10 @@ function setup() {
   poseNet.on('pose', results => poses = results);
 
   video.hide(); // Hide video element, only draw canvas
+
+  navigator.mediaDevices.getUserMedia({ video: true }).catch(err => {
+    document.querySelector('body').innerText = 'You need a webcam for this to work'
+  });
 }
 
 function draw() {
