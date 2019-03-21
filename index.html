@@ -80,12 +80,12 @@ function draw() {
       }
     }
 
-    // Draw background (cover frame)
+    // Hide frame once we've used it to find poses
     fill(0);
     noStroke();
     rect(0, 0, width, height);
 
-    // Draw eyes
+    // Draw all eyes found
     for (let i = 0; i < eyes.length; i++) {
       let eye = eyes[i];
       if (eye.img.pixels) {
