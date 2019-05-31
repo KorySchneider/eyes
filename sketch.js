@@ -1,22 +1,23 @@
 'use strict';
 
-const debug = true;
+let debug = false;
 
 const webcamWidth = 960;
 const webcamHeight = 720;
+
+const eyeBoxScale = 0.45;
 
 let video;
 let poseNet;
 let poses = [];
 let eyes = [];
 
-let eyeBoxSize = 40;
-
 class Eye {
-  constructor(img, x, y) {
+  constructor(img, x, y, size) {
     this.img = img;
     this.x = x;
     this.y = y;
+    this.size = size;
   }
 }
 
@@ -57,24 +58,43 @@ function draw() {
     eyes = [];
     // For each pose
     for (let i = 0; i < poses.length; i++) {
-      // For each eye
-      for (let j = 1; j < 3; j++) {
-        // Create Eye object for each eye found
-        let eye = poses[i].pose.keypoints[j];
-        if (eye.score > 0.25) { // Want to be fairly sure it's an eye
-          eyes.push(
-            new Eye(
-              get( // Grab pixels
-                eye.position.x - (eyeBoxSize/2),
-                eye.position.y - (eyeBoxSize/2),
-                eyeBoxSize,
-                eyeBoxSize
-              ),
-              eye.position.x,
-              eye.position.y
-            )
-          );
-        }
+      // Find eye position and distance between
+      const leftEye = poses[i].pose.keypoints[1];
+      const rightEye = poses[i].pose.keypoints[2];
+      const eyeDist = dist(
+        leftEye.position.x,
+        leftEye.position.y,
+        rightEye.position.x,
+        rightEye.position.y,
+      ) * eyeBoxScale;
+
+      // If we're pretty sure those are eyes
+      if (leftEye.score >= 0.25 && rightEye.score >= 0.25) {
+        // Get left eye
+        eyes.push(new Eye(
+          get(
+            leftEye.position.x - (eyeDist / 2),
+            leftEye.position.y - (eyeDist / 2),
+            eyeDist,
+            eyeDist,
+          ),
+          leftEye.position.x,
+          leftEye.position.y,
+          eyeDist
+        ));
+
+        // Get right eye
+        eyes.push(new Eye(
+          get(
+            rightEye.position.x - (eyeDist / 2),
+            rightEye.position.y - (eyeDist / 2),
+            eyeDist,
+            eyeDist,
+          ),
+          rightEye.position.x,
+          rightEye.position.y,
+          eyeDist
+        ));
       }
     }
 
@@ -89,26 +109,26 @@ function draw() {
       rect(0, 0, width, height);
     }
 
-    // Draw all eyes found
+    // Draw all pairs of eyes found
     for (let i = 0; i < eyes.length; i++) {
       let eye = eyes[i];
       if (eye.img.pixels) {
         image(
           eye.img,
-          eye.x - (eyeBoxSize/2),
-          eye.y - (eyeBoxSize/2),
-          eyeBoxSize,
-          eyeBoxSize
+          eye.x - (eye.size / 2),
+          eye.y - (eye.size / 2),
+          eye.size,
+          eye.size,
         );
       }
       if (debug) {
         stroke(255, 0, 0);
         noFill();
         rect(
-          eye.x - (eyeBoxSize/2),
-          eye.y - (eyeBoxSize/2),
-          eyeBoxSize,
-          eyeBoxSize
+          eye.x - (eye.size / 2),
+          eye.y - (eye.size / 2),
+          eye.size,
+          eye.size,
         );
       }
     }
