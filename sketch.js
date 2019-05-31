@@ -76,7 +76,11 @@ function draw() {
     }
 
     // Hide frame once we've used it to find poses
-    if (!debug) {
+    if (debug) {
+      fill(0, 0, 0, 180);
+      noStroke();
+      rect(0, 0, width, height);
+    } else {
       fill(0);
       noStroke();
       rect(0, 0, width, height);
