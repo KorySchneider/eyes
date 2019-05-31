@@ -1,6 +1,9 @@
 'use strict';
 
-let debug = true;
+const debug = true;
+
+const webcamWidth = 960;
+const webcamHeight = 720;
 
 let video;
 let poseNet;
@@ -26,7 +29,7 @@ function setup() {
   noLoop(); // Don't start drawing until model is loaded
   frameRate(30);
 
-  createCanvas(960, 720);
+  createCanvas(webcamWidth, webcamHeight);
   video = createCapture(VIDEO);
   video.size(width, height);
 
