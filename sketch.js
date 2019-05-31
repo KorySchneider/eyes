@@ -1,5 +1,7 @@
 'use strict';
 
+let debug = true;
+
 let video;
 let poseNet;
 let poses = [];
@@ -74,9 +76,11 @@ function draw() {
     }
 
     // Hide frame once we've used it to find poses
-    fill(0);
-    noStroke();
-    rect(0, 0, width, height);
+    if (!debug) {
+      fill(0);
+      noStroke();
+      rect(0, 0, width, height);
+    }
 
     // Draw all eyes found
     for (let i = 0; i < eyes.length; i++) {
@@ -84,6 +88,16 @@ function draw() {
       if (eye.img.pixels) {
         image(
           eye.img,
+          eye.x - (eyeBoxSize/2),
+          eye.y - (eyeBoxSize/2),
+          eyeBoxSize,
+          eyeBoxSize
+        );
+      }
+      if (debug) {
+        stroke(255, 0, 0);
+        noFill();
+        rect(
           eye.x - (eyeBoxSize/2),
           eye.y - (eyeBoxSize/2),
           eyeBoxSize,
