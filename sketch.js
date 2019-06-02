@@ -6,6 +6,7 @@ const webcamWidth = 960;
 const webcamHeight = 720;
 
 const eyeBoxScale = 0.45;
+const eyeScoreThreshold = 0.2;
 
 let video;
 let poseNet;
@@ -69,7 +70,7 @@ function draw() {
       ) * eyeBoxScale;
 
       // If we're pretty sure those are eyes
-      if (leftEye.score >= 0.25 && rightEye.score >= 0.25) {
+      if (leftEye.score >= eyeScoreThreshold && rightEye.score >= eyeScoreThreshold) {
         // Get left eye
         eyes.push(new Eye(
           get(
