@@ -113,7 +113,7 @@ function draw() {
     // Draw all pairs of eyes found
     for (let i = 0; i < eyes.length; i++) {
       let eye = eyes[i];
-      if (eye.img.width > 0) {
+      if (eye.img.width > 0 && eye.size >= 10) {
         image(
           eye.img,
           eye.x - (eye.size / 2),
